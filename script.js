@@ -1,5 +1,8 @@
 let player, ball, redBricks, yellowBricks, blueBricks, cursors;
 let openingText, gameOverText, playerWonText;
+let score = 0;
+let scoreText;
+let soundIcon;
 
 // This object contains all the Phaser configurations to load game
 const config = {
@@ -33,19 +36,46 @@ function preload() {
     frameWidth: 80,
     frameHeight: 16,
   });
-
+  this.load.audio('jade', 'assets/Jade.ogg');
   this.load.image('ball', 'assets/ball.png');
   this.load.image('brick1', 'assets/brick1.png');
   this.load.image('brick2', 'assets/brick2.png');
   this.load.image('brick3', 'assets/brick3.png');
+  this.load.image('sound-icon', 'assets/sound-icon.png');
 }
 
 function create() {
+  //add song
+  song = this.sound.add('jade');
+  song.play({
+    volume: 0.1,
+    loop: true,
+  });
+  //add a mute button
+  /*
+    this.soundButton = this.game.add.button(
+    this.game.world.centerX + 240,
+    this.game.world.centerY - 290,
+
+    this.toggleMute,
+    this,
+    'sound-icon',
+    'sound-icon',
+    'sound-icon'
+  );
+  this.soundButton.fixedToCamera = true;
+  if (!this.game.sound.mute) {
+    this.soundButton.tint = 16777215;
+  } else {
+    this.soundButton.tint = 16711680;
+  }
+  */
+
   //opening text to start game
   openingText = this.add.text(
     this.physics.world.bounds.width / 2,
     this.physics.world.bounds.height / 2,
-    'Press SPACE to Start',
+    'Press SPACE to Start \n\nUse <- and -> to play!',
     {
       fontFamily: 'Monaco, Courier, monospace',
       fontSize: '50px',
@@ -54,7 +84,10 @@ function create() {
   );
   //sets location of paddle
   openingText.setOrigin(0.5);
-
+  scoreText = this.add.text(16, 600, 'Score: 0', {
+    fontSize: '32px',
+    fill: '#fff',
+  });
   player = this.physics.add.sprite(
     400, // x position
     600, // y position
@@ -212,6 +245,7 @@ function update() {
     gameOverText.setVisible(true);
   } else if (isWon(this.physics.world)) {
     playerWonText.setVisible(true);
+    player.ball.setVelocityX(0);
   } else {
     //player stays still if no key is pressed
     player.body.setVelocityX(0);
@@ -254,6 +288,9 @@ function isWon() {
 
 function hitBrick(ball, brick) {
   brick.disableBody(true, true);
+
+  score += 10;
+  scoreText.setText('Score: ' + score);
 
   if (ball.body.velocity.x === 0) {
     randNum = Math.random();
