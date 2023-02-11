@@ -189,6 +189,12 @@ function create() {
 
   //controls
   cursors = this.input.keyboard.createCursorKeys();
+  //touch input
+  game.input.addPointer();
+  game.input.addPointer();
+  game.input.addPointer();
+  game.input.addPointer();
+  game.input.addPointer();
   //colliders for the ball and paddle
   player.setCollideWorldBounds(true);
   ball.setCollideWorldBounds(true);
@@ -313,4 +319,10 @@ function hitPlayer(ball, player) {
   } else {
     ball.setVelocityX(newXVelocity);
   }
+}
+
+//Respond to touch input
+if (game.input.pointer1.isDown) {
+  player.x = game.input.pointer1.x;
+  player.y = game.input.pointer1.y;
 }
